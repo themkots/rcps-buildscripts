@@ -3,7 +3,7 @@
 set -e
 
 package_name="openmpi"
-package_version="4.0.3"
+package_version="4.1.0"
 package_description="The Open MPI Project is an open source Message Passing Interface implementation."
 
 cluster=${cluster:-$(/shared/ucl/apps/cluster-bin/whereami)}
@@ -12,15 +12,16 @@ source includes/source_includes.sh
 
 _env_setup() {
     module purge
-    require gcc-libs/4.9.2
-    require compilers/gnu/4.9.2
+    require beta-modules
+    require gcc-libs/10.2.0
+    require compilers/gnu/10.2.0
 
     # On Myriad, build with UCX
     if [ $cluster == "myriad" ]
     then 
         require numactl/2.0.12
-        require binutils/2.29.1/gnu-4.9.2
-        require ucx/1.8.0/gnu-4.9.2
+        require binutils/2.36.1/gnu-10.2.0
+        require ucx/1.9.0/gnu-10.2.0
     fi
 
     make_build_env ""
@@ -37,7 +38,7 @@ _file_setup() {
 
     wget "$package_url"
 
-    manifest sha1:d958454e32da2c86dd32b7d557cf9a401f0a08d3 ${package_file}
+    manifest sha1:b87fbc8113936911eb9bf7cb068037359a8a748a ${package_file}
 
     tar -xf "$package_file"
 }
@@ -73,13 +74,14 @@ _post_build() {
         -p "$install_prefix" \
         -w "Adds ${package_name} ${package_version} to your environment. ${package_description}" \
         -c "mpi" \
-        -d \
         -v "MPI_HOME=${install_prefix}" \
         -v "MPI_RUN=${install_prefix}/bin/mpirun" \
         -v "GERUN_LAUNCHER=openmpi-sge" \
         -e "PATH:/shared/ucl/apps/openmpi/ucl-wrapper-omp3+/bin" \
     chmod -R a+rX "${module_dir}"
     echo "Modules in: ${module_dir}"
+    echo "This modulefile needs manual intervention to add the correct ucl-wrapper to the PATH"
+    echo "and to add the Myriad-specific UCX alterations."
     cd "$owd"
 }
 
