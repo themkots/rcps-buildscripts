@@ -3,7 +3,7 @@
 set -e
 
 package_name="openmpi"
-package_version="4.1.0"
+package_version="4.0.5"
 package_description="The Open MPI Project is an open source Message Passing Interface implementation."
 
 cluster=${cluster:-$(/shared/ucl/apps/cluster-bin/whereami)}
@@ -38,7 +38,7 @@ _file_setup() {
 
     wget "$package_url"
 
-    manifest sha1:b87fbc8113936911eb9bf7cb068037359a8a748a ${package_file}
+    manifest sha1:01fba71461dd0c89e191e3bf1eb70e832d1aa5db ${package_file}
 
     tar -xf "$package_file"
 }
